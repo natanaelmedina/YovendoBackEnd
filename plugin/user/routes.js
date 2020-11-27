@@ -6,7 +6,7 @@ module.exports = [
     {
         method: 'POST',
         path: '/Api/User/Register',
-        handler: handlers.CreateUser,
+        handler: handlers.register,
         options: {
             description: 'crea un usuario',
             tags: ['user', 'CreateUser'],
@@ -19,14 +19,23 @@ module.exports = [
     },
     {
         method: 'PATCH',
-        path: '/Api/User/Update',
-        handler: handlers.CreateUser,
+        path: '/Api/User/Update/{id}',
+        handler: handlers.updateUser,
         options: {
-            description: 'updatea informacion del usuario',
+            description: 'actualiza información del usuario',
             tags: ['user', 'update'],
             validate: {
-                payload: schemas.CreateUser,
+                payload: schemas.updateUser,
                 failAction: handleRequestError
+            },
+            payload: {
+                allow: 'multipart/form-data',
+                output: 'stream',
+                parse:    true,
+                maxBytes: 10000000,
+                multipart: {
+                    output: 'stream'
+                }
             }
             //auth: "jwt",
         }
@@ -36,7 +45,7 @@ module.exports = [
         path: '/Api/User/Login',
         handler: handlers.login,
         options: {
-            description: 'Loguea el usuario al sistema',
+            description: 'Loguear el usuario al sistema',
             tags: ['user', 'login'],
             validate: {
                 payload: schemas.login,
@@ -50,7 +59,7 @@ module.exports = [
         path: '/Api/User/LoginFromGoogle',
         handler: handlers.login,
         options: {
-            description: 'Loguea el usuario al sistema via google',
+            description: 'Loguear el usuario al sistema via google',
             tags: ['user', 'googleLogin'],
             validate: {
                 payload: schemas.login,
@@ -61,15 +70,11 @@ module.exports = [
     },
     {
         method: 'GET',
-        path: '/Api/User',
-        handler: handlers.login,
+        path: '/Api/User/{id}',
+        handler: handlers.getUser,
         options: {
-            description: '',
-            tags: ['user', 'googleLogin'],
-            validate: {
-                payload: schemas.login,
-                failAction: handleRequestError
-            }
+            description: "busca información de un usuario",
+            tags: ['user', 'getUser'],
             //auth: "jwt",
         }
     },

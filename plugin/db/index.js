@@ -5,7 +5,7 @@ exports.plugin = {
     version: '1.0.0',
     register: async function (server, options) {
         try {
-            const { conn } = require('./conn')
+            const conn = require('./conn')
             await conn.sync()
 
         } catch (err) {

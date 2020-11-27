@@ -2,15 +2,26 @@
 
 const Hapi = require('@hapi/hapi')
 const Plugin =require('./plugin')
+const config =require('./config')
 
 const init = async () => {
 
-    const server = Hapi.server({
-        port: 3000,
-        host: '0.0.0.0'
-    });
+    const server = Hapi.server(config.server.http);
 
     await server.register(Plugin);
+    server.route([
+        {
+          method: 'GET',
+          path: '/public/{path*}',
+          handler: {
+            directory: {
+              path: 'public',
+              listing: false,
+              index: false
+            }
+          }
+        }
+    ])
 
     await server.start();
     console.log('Server running on %s', server.info.uri);

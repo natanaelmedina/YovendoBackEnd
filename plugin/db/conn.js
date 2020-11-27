@@ -8,10 +8,8 @@ const conn = new Sequelize(db.name, db.user.name, db.user.password, {
     logging:console.log
 })
 
-module.exports = {
-    conn,
-    User: require('./models/user')(conn)
-}
+module.exports = conn
+
 
 
 
