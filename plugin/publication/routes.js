@@ -1,6 +1,6 @@
 const handlers = require('./handlers')
 const schemas = require('./schemes')
-const {handleRequestError} = require('../../utils')
+const { handleRequestError } = require('../../utils')
 
 module.exports = [
     {
@@ -10,12 +10,15 @@ module.exports = [
         options: {
             description: 'crea un publication',
             tags: ['api', 'create'],
+            auth: "jwt",
             validate: {
                 payload: schemas.create,
                 failAction: handleRequestError
-            }
+            },
+            
         }
     },
+
     {
         method: 'GET',
         path: '/Api/Publication/GetById/{id}',
@@ -23,7 +26,10 @@ module.exports = [
         options: {
             description: 'Traer una publication por id',
             tags: ['api', 'GetPublicationById'],
-        }
+            auth: "jwt"
+        },
+       
+
     },
     {
         method: 'GET',
@@ -32,7 +38,9 @@ module.exports = [
         options: {
             description: 'Traer una publication por id',
             tags: ['api', 'GetPublicationByUser'],
-        }
+            auth: "jwt"
+        },
+       
     },
     {
         method: 'GET',
@@ -41,7 +49,8 @@ module.exports = [
         options: {
             description: 'Traer una publication por id',
             tags: ['api', 'GetPublications'],
-        }
+            auth: "jwt"
+        },
     }
 
 

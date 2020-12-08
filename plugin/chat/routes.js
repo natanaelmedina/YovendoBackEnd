@@ -1,6 +1,6 @@
 const handlers = require('./handlers')
 const schemas = require('./schemes')
-const {handleRequestError} = require('../../utils')
+const { handleRequestError } = require('../../utils')
 
 module.exports = [
     {
@@ -10,7 +10,7 @@ module.exports = [
         options: {
             description: "busca chats de un usuario",
             tags: ['chats', 'getChat'],
-            //auth: "jwt",
+            auth: "jwt",
         }
     },
 
@@ -21,11 +21,13 @@ module.exports = [
         options: {
             description: "inserta chats de un usuario",
             tags: ['chats', 'getChat'],
+            auth: "jwt",
             validate: {
                 payload: schemas.create,
                 failAction: handleRequestError
+                
             }
-            //auth: "jwt",
+            
         }
     }
 

@@ -14,13 +14,13 @@ module.exports = {
         }
     },
     server: {
-        domain:"http://172.25.20.94:3000",
+        domain: "http://172.25.20.94:3000",
         https: {
             port: 3001,
             host: '0.0.0.0',
             tls: {
-              //  key: fs.readFileSync('c:/ssl/private.key'),
-              //  cert: fs.readFileSync('c:/ssl/cert.crt')
+                //  key: fs.readFileSync('c:/ssl/private.key'),
+                //  cert: fs.readFileSync('c:/ssl/cert.crt')
             },
             routes: {
                 cors: true,
@@ -40,8 +40,18 @@ module.exports = {
             }
         }
     },
-    gmailCred:{
-        user:"yovendord@gmail.com",
-        pass:"yovendord2020"
-    }
+    gmailCred: {
+        user: "rd.yovendo@gmail.com",
+        pass: "Im@901811"
+    },
+    twilio: {
+        accountSid: 'AC7890488d169dffbd2468847920cbf414',
+        authToken: '66324a90cf3807ab78515ba30d94a188',
+        chanels: [
+            {
+                name: "sms",
+                phone: 14155238886
+            }
+        ]
+    },
 }

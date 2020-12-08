@@ -14,7 +14,7 @@ module.exports = [
                 payload: schemas.CreateUser,
                 failAction: handleRequestError
             }
-            //auth: "jwt",
+           // auth: "jwt",
         }
     },
     {
@@ -51,8 +51,8 @@ module.exports = [
                 multipart: {
                     output: 'stream'
                 }
-            }
-            //auth: "jwt",
+            },
+            auth: "jwt",
         }
     },
     {
@@ -90,8 +90,9 @@ module.exports = [
         options: {
             description: "busca información de un usuario",
             tags: ['user', 'getUser'],
-            //auth: "jwt",
-        }
+            
+        },
+        //auth: "jwt"
     }
     ,
     {
@@ -100,8 +101,18 @@ module.exports = [
         handler: handlers.SendCodeEmail,
         options: {
             description: "Enviá código de confirmación para verificar el correo",
-            tags: ['user', 'getUser'],
-            auth: false,
+            tags: ['user', 'confirmar email'],
+            
+        }
+    } ,
+    {
+        method: 'POST',
+        path: '/Api/User/confirmWs',
+        handler: handlers.confirmWs,
+        options: {
+            description: "Enviá código de confirmación para verificar el whatsApp del cliente",
+            tags: ['user', 'confirmar whatsApp'],
+            
         }
     }
 ]

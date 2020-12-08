@@ -10,8 +10,10 @@ module.exports = [
         options: {
             description: "busca mensajes de un usuario",
             tags: ['messages', 'getMessages'],
-            //auth: "jwt",
-        }
+            auth: "jwt"
+            
+        },
+       
     },
 
     {
@@ -21,11 +23,12 @@ module.exports = [
         options: {
             description: "enviá un mensaje a un usuario",
             tags: ['messages', 'sendMessage'],
+            auth: "jwt",
             validate: {
                 payload: schemas.CreateMessages,
                 failAction: handleRequestError
-            }
-            //auth: "jwt",
+            },
+            
         }
     },
 

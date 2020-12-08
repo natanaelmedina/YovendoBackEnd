@@ -10,7 +10,7 @@ module.exports = [
         options: {
             description: "busca tienda por id",
             tags: ['tienda', 'getById'],
-            //auth: "jwt",
+            auth: "jwt",
         }
     },
 
@@ -21,11 +21,12 @@ module.exports = [
         options: {
             description: "crea tienda",
             tags: ['tienda', 'create'],
+            auth: "jwt",
             validate: {
                 payload: schemas.CreateTienda,
                 failAction: handleRequestError
             }
-            //auth: "jwt",
+          
         }
     },
 
