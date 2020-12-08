@@ -1,6 +1,10 @@
-//const conn = require('../conn')
+const Publication = require('./publication');
+
 
 module.exports={
-    User: require('./user')(),
-  //  Publication: require('./publication')(conn)
+    User: require('./user'),
+    Chat: require('./chat'),
+    Messages: require('./messages'),
+    Publication: require('./publication'),
+    Tienda: require('./tienda')
 }

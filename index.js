@@ -3,6 +3,7 @@
 const Hapi = require('@hapi/hapi')
 const Plugin =require('./plugin')
 const config =require('./config')
+process.env.JWT = 'yovendoRd2020';
 
 const init = async () => {
 

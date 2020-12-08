@@ -4,12 +4,15 @@ const uuid = require('uuid')
 const save = require('save-file')
 const path = require('path')
 const { server } = require('../../config')
-
+const utils = require('../../utils')
+const moment = require('moment')
+const Bcrypt = require('bcrypt')
 
 const register = async (req, h) => {
     try {
 
         const data = req.payload
+        data.password = await Bcrypt.hash(data.password)
         const createData = await User.create(data)
 
         return {
@@ -17,6 +20,7 @@ const register = async (req, h) => {
             success: true,
             data: createData
         }
+
     } catch (error) {
         return {
             message: error.message,
@@ -55,6 +59,41 @@ const updateUser = async (req, h) => {
     }
 }
 
+const resetPassword = async (req, h) => {
+    try {
+        const data = req.payload
+        const user = req.user
+
+
+        const dataUser = await User.findByPk(user.id, {
+            attributes: ['password']
+        })
+
+        if (await Bcrypt.compare(dataUser.password, data.oldPassword)) {
+            data.password = data.newPassword
+            await User.update(data, { where: { id: userId } })
+        }
+        else
+            throw new Error('Vieja contraseña Incorrecta!')
+
+
+        return {
+            message: "contraseña restablecida",
+            success: true,
+            data: null
+        }
+
+    } catch (error) {
+        return {
+            message: error.message,
+            success: false,
+            data: null
+        }
+    }
+}
+
+
+
 const getUser = async (req, h) => {
     try {
         const { id } = req.params
@@ -91,10 +130,18 @@ const login = async (req, h) => {
         if (!user.active)
             throw new Error('Usuario inactivo!')
 
+
+        user.dataValues.exp = moment().add(24, "hour").unix()
         delete user.dataValues.password
 
+        const token = utils.generateJWT({
+            ...user.dataValues
+        })
+        user.dataValues.token = token
+
+
         return {
-            message: "OK",
+            message: "Login success",
             success: true,
             data: user
         }
@@ -107,10 +154,26 @@ const login = async (req, h) => {
     }
 }
 
+const SendCodeEmail = async (req, h) => {
+    try {
+        const { email } = req.payload
+
+        await utils.sendEmail({
+            text:"Su codifo"
+
+        })
+
+    } catch (error) {
+
+    }
+
+}
 module.exports = {
     register,
     getUser,
     login,
-    updateUser
+    updateUser,
+    resetPassword,
+    SendCodeEmail
 
 }

@@ -40,4 +40,8 @@ module.exports = {
             }
         }
     },
+    gmailCred:{
+        user:"yovendord@gmail.com",
+        pass:"yovendord2020"
+    }
 }

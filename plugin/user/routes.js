@@ -19,6 +19,21 @@ module.exports = [
     },
     {
         method: 'PATCH',
+        path: '/Api/User/resetPassword',
+        handler: handlers.resetPassword,
+        options: {
+            description: 'Modifica Password',
+            tags: ['user', 'resetPassword'],
+            validate: {
+                payload: schemas.resetPassword,
+                failAction: handleRequestError
+            },
+            auth: "jwt",
+        }
+    },
+
+    {
+        method: 'PATCH',
         path: '/Api/User/Update/{id}',
         handler: handlers.updateUser,
         options: {
@@ -77,5 +92,16 @@ module.exports = [
             tags: ['user', 'getUser'],
             //auth: "jwt",
         }
-    },
+    }
+    ,
+    {
+        method: 'POST',
+        path: '/Api/User/SendCodeEmail',
+        handler: handlers.SendCodeEmail,
+        options: {
+            description: "Enviá código de confirmación para verificar el correo",
+            tags: ['user', 'getUser'],
+            auth: false,
+        }
+    }
 ]
