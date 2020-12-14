@@ -1,7 +1,7 @@
-const { DataTypes, Model } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../conn')
 
-const Tienda =sequelize.define("tienda",{
+const Tienda = sequelize.define("tienda", {
     id: {
         type: DataTypes.INTEGER,
         autoIncrementIdentity: true,
@@ -27,9 +27,8 @@ const Tienda =sequelize.define("tienda",{
         defaultValue: 1
     },
     socialNetwork: {
-        type: DataTypes.ARRAY,
-        allowNull: false,
-        defaultValue: 1
+        type: DataTypes.ARRAY(DataTypes.JSON),
+        allowNull: false
     },
     policy: {
         type: DataTypes.STRING,
@@ -46,7 +45,7 @@ const Tienda =sequelize.define("tienda",{
 
 }, {
     // Other model options go here
-  //  sequelize, // We need to pass the connection instance
+    //  sequelize, // We need to pass the connection instance
     modelName: 'tienda' // We need to choose the model name
 });
 
