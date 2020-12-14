@@ -8,8 +8,8 @@ exports.plugin = {
         try {
             
             const conn = require('./conn')
-            setRelations()
-            await conn.sync()
+           // setRelations()
+           // await conn.sync()
             
 
         } catch (err) {

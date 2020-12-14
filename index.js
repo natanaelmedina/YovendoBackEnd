@@ -1,10 +1,13 @@
 'use strict';
 
 const Hapi = require('@hapi/hapi')
-const Plugin =require('./plugin')
-const config =require('./config')
-process.env.JWT = 'yovendoRd2020';
+const Plugin = require('./plugin')
+const config = require('./config')
+const ServerEvent = require('./utils').serverEvent
+const stream = require('stream').PassThrough
+process.env.JWT = 'yovendoRd2020'
 
+global.ServerEvent = ServerEvent
 const init = async () => {
 
     const server = Hapi.server(config.server.http);
@@ -12,15 +15,61 @@ const init = async () => {
     await server.register(Plugin);
     server.route([
         {
-          method: 'GET',
-          path: '/public/{path*}',
-          handler: {
-            directory: {
-              path: 'public',
-              listing: false,
-              index: false
+            method: 'GET',
+            path: '/',
+            handler: () => "Server OK."
+        },
+        {
+            method: 'GET',
+            path: '/public/{path*}',
+            handler: {
+                directory: {
+                    path: 'public',
+                    listing: false,
+                    index: false
+                }
             }
-          }
+        },
+        {
+            method: 'GET',
+            path: '/Api/Events/{user}',
+            handler: function (req, h) {
+                const { user } = req.params
+                class ResponseStream extends stream {
+                    setCompressor(compressor) {
+                        this.compressor = compressor;
+                        setTimeout(() => {
+                            this.compose({
+                                type: "connect",
+                                payload: null,
+                                to: user
+                            })
+                        }, 0)
+                        ServerEvent.on("message", this.compose)
+                        req.raw.req.on("close", this.error)
+                    }
+                    compose = (data = "") => {
+                        if (data && [user, 0, undefined].includes(data.to)) {
+
+                            this.write(`retry:2000\n`)
+                            this.write(`id:${user}\n`)
+                            this.write(`event:message\n`)
+                            this.write(`data:${Buffer.from(JSON.stringify(data)).toString('base64')}\n\n`)
+                            this.compressor.flush()
+                        }
+                    }
+
+                    error = () => {
+                        ServerEvent.off("message", this.compose)
+                    }
+                }
+                const myStream = new ResponseStream()
+                const resp = h.response(myStream).type('text/event-stream')
+                return resp
+
+
+            }
+
         }
     ])
 
@@ -37,3 +86,13 @@ process.on('unhandledRejection', (err) => {
 });
 
 init();
+
+/* for (let index = 0; index < 10000; index++) {
+    !function () {
+        var source = new EventSource('/Api/Events/0')
+        source.onmessage = function(e) { console.log( JSON.parse(atob(e.data)) ) }
+        source.onerror = function(e) { console.error(e); }
+        source.onopen = function(e) { console.info(e); }
+
+    }()
+} */

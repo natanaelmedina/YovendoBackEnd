@@ -1,7 +1,7 @@
 module.exports = {
     db: {
         restoreDb: false,
-        port: "5432",
+        port: "5433",
         host: "localhost",
         name: "YOVENDO",
         user: {
