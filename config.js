@@ -14,7 +14,7 @@ module.exports = {
         }
     },
     server: {
-        domain: "http://172.25.20.94:3000",
+        domain: "http://172.25.20.101:3000",
         https: {
             port: 3001,
             host: '0.0.0.0',

@@ -14,9 +14,10 @@ module.exports = () => {
         
         Chat.belongsTo(Publication)
         Publication.hasMany(Chat)
-
-
         //relaciones entre chat mensajes,usuarios y publicaciones.------
+
+
+        
 
 
     } catch (error) {

@@ -2,7 +2,7 @@ const Joi = require('joi')
 
 const create = Joi.object({
     userId:Joi.number().required(),
-    tittle:Joi.string().max(300).required(),
+    title:Joi.string().max(300).required(),
     desc:Joi.string().max(1500).optional(),
     images:Joi.array().optional(),
     category:Joi.number(),
@@ -14,6 +14,5 @@ const create = Joi.object({
 
 
 module.exports={
-    create
-  
+    create 
 }
