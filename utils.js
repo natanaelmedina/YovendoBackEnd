@@ -2,14 +2,16 @@
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const config = require('./config');
+const Emitter = require('events').EventEmitter;
+Emitter.defaultMaxListeners = 9E6
 
 // create application/json parser
 var transporter = nodemailer.createTransport({
   service: 'gmail',
   secure: false,
   auth: {
-    user:config.gmailCred.user,
-    pass:config.gmailCred.pass
+    user: config.gmailCred.user,
+    pass: config.gmailCred.pass
   },
   tls: {
     rejectUnauthorized: false
@@ -66,9 +68,29 @@ const sendEmail = (d) => {
   })
 }
 
+class ServerEvent extends Emitter {
+  constructor(props) {
+    super(props)
+  }
+  /**
+   * 
+   * @param {Object} data dotos a enviar a los clientes contectos
+   * @param {String} data[].type //event type
+   * @param {Object} data[].payload // carga util
+   * @param {String} data[].to // a quien enviá el mensaje, elige all  para enviar a todos
+   */
+  send(data) {
+    if (typeof data !== "object")
+      throw new Error("data debe ser tipo object")
+    this.emit("message", data)
+  }
+}
+const serverEvent = new ServerEvent()
+
 module.exports = {
   handleRequestError,
   buildResponse,
   generateJWT,
-  sendEmail
+  sendEmail,
+  serverEvent
 }

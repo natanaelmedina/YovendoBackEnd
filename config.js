@@ -1,7 +1,7 @@
 module.exports = {
     db: {
         restoreDb: false,
-        port: "5432",
+        port: "5433",
         host: "localhost",
         name: "YOVENDO",
         user: {
@@ -14,7 +14,7 @@ module.exports = {
         }
     },
     server: {
-        domain: "http://172.25.20.94:3000",
+        domain: "http://yovendord.com:3000",
         https: {
             port: 3001,
             host: '0.0.0.0',
@@ -46,7 +46,7 @@ module.exports = {
     },
     twilio: {
         accountSid: 'AC7890488d169dffbd2468847920cbf414',
-        authToken: '66324a90cf3807ab78515ba30d94a188',
+        get authToken() { return process.env.smsToken },
         chanels: [
             {
                 name: "sms",
