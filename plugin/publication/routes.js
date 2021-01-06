@@ -10,7 +10,7 @@ module.exports = [
         options: {
             description: 'crea un publication',
             tags: ['api', 'create'],
-            auth: "jwt",
+            //auth: "jwt",
             validate: {
                 payload: schemas.create,
                 failAction: handleRequestError
