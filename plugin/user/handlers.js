@@ -3,7 +3,7 @@ const FileType = require('file-type')
 const uuid = require('uuid')
 const save = require('save-file')
 const path = require('path')
-const { server,twilio } = require('../../config')
+const { server, twilio } = require('../../config')
 const utils = require('../../utils')
 const moment = require('moment')
 const Bcrypt = require('bcrypt')
@@ -53,7 +53,7 @@ const updateUser = async (req, h) => {
         await User.update(data, { where: { id } })
 
         return {
-            message: "OK",
+            message: "Datos actualizados.!",
             success: true,
             data
         }
@@ -79,14 +79,16 @@ const resetPassword = async (req, h) => {
 
         if (await Bcrypt.compare(data.oldPassword, dataUser.password)) {
             data.password = await Bcrypt.hash(data.newPassword, 10)
-            await User.update(data, { where: { id: user.id } })
+            await User.update({
+                password: data.password
+            }, { where: { id: user.id } })
         }
         else
-            throw new Error('Vieja contraseña Incorrecta!')
+            throw new Error('Vieja contraseña incorrecta.!')
 
 
         return {
-            message: "La contraseña ha sido cambiado correctamente!",
+            message: "La contraseña ha sido cambiada.",
             success: true,
             data: null
         }

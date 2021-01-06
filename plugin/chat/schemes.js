@@ -5,7 +5,7 @@ const create = Joi.object({
     lastResponse: Joi.date().required(),
     lastMsg: Joi.string().required(),
     toUserId: Joi.number().required(),
-    fromUserId: Joi.string().required(),
+    fromUserId: Joi.number().required(),
     publicationId: Joi.string().uuid()
 })
 

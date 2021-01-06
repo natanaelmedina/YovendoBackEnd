@@ -1,6 +1,6 @@
 const handlers = require('./handlers')
 const schemas = require('./schemes')
-const {handleRequestError} = require('../../utils')
+const { handleRequestError } = require('../../utils')
 
 module.exports = [
     {
@@ -14,7 +14,6 @@ module.exports = [
                 payload: schemas.CreateUser,
                 failAction: handleRequestError
             }
-           // auth: "jwt",
         }
     },
     {
@@ -46,7 +45,7 @@ module.exports = [
             payload: {
                 allow: 'multipart/form-data',
                 output: 'stream',
-                parse:    true,
+                parse: true,
                 maxBytes: 10000000,
                 multipart: {
                     output: 'stream'
@@ -66,7 +65,6 @@ module.exports = [
                 payload: schemas.login,
                 failAction: handleRequestError
             }
-            //auth: "jwt",
         }
     },
     {
@@ -80,7 +78,6 @@ module.exports = [
                 payload: schemas.login,
                 failAction: handleRequestError
             }
-            //auth: "jwt",
         }
     },
     {
@@ -90,9 +87,8 @@ module.exports = [
         options: {
             description: "busca información de un usuario",
             tags: ['user', 'getUser'],
-            
-        },
-        //auth: "jwt"
+
+        }
     }
     ,
     {
@@ -102,9 +98,9 @@ module.exports = [
         options: {
             description: "Enviá código de confirmación para verificar el correo",
             tags: ['user', 'confirmar email'],
-            
+
         }
-    } ,
+    },
     {
         method: 'POST',
         path: '/Api/User/confirmWs',
@@ -112,7 +108,7 @@ module.exports = [
         options: {
             description: "Enviá código de confirmación para verificar el whatsApp del cliente",
             tags: ['user', 'confirmar whatsApp'],
-            
+            auth: "jwt"
         }
     }
 ]

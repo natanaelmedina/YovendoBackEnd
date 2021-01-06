@@ -1,11 +1,17 @@
 'use strict';
 
+process.stdout.write('\x1Bc'); 
+process.env.smsToken = 'bb3d95d58e0430294cd6f8ca6aaddd49'
+process.env.JWT = 'yovendoRd2020'
+
+
 const Hapi = require('@hapi/hapi')
 const Plugin = require('./plugin')
 const config = require('./config')
 const ServerEvent = require('./utils').serverEvent
 const stream = require('stream').PassThrough
-process.env.JWT = 'yovendoRd2020'
+
+
 
 global.ServerEvent = ServerEvent
 const init = async () => {
@@ -49,9 +55,8 @@ const init = async () => {
                         req.raw.req.on("close", this.error)
                     }
                     compose = (data = "") => {
-                        if (data && [user, 0, undefined].includes(data.to)) {
-
-                            this.write(`retry:2000\n`)
+                        const to = Array.isArray(data.to) ? data.to : [data.to ? data.to : 0]
+                        if (data && to.includes(parseInt(user))) {
                             this.write(`id:${user}\n`)
                             this.write(`event:message\n`)
                             this.write(`data:${Buffer.from(JSON.stringify(data)).toString('base64')}\n\n`)
@@ -67,8 +72,7 @@ const init = async () => {
                 const resp = h.response(myStream).type('text/event-stream')
                 return resp
 
-
-            }
+           }
 
         }
     ])
@@ -77,22 +81,9 @@ const init = async () => {
     console.log('Server running on %s', server.info.uri);
 };
 
-
-
 process.on('unhandledRejection', (err) => {
-
     console.log(err);
     process.exit(1);
 });
 
 init();
-
-/* for (let index = 0; index < 10000; index++) {
-    !function () {
-        var source = new EventSource('/Api/Events/0')
-        source.onmessage = function(e) { console.log( JSON.parse(atob(e.data)) ) }
-        source.onerror = function(e) { console.error(e); }
-        source.onopen = function(e) { console.info(e); }
-
-    }()
-} */
