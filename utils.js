@@ -23,7 +23,7 @@ const handleRequestError = function (request, h, err) {
   console.log("err: ", err);
   if (err.isJoi && Array.isArray(err.details) && err.details.length > 0) {
     const errorMessages = err.details.map(e => e.message.replace(/\"/g, ""))
-    return buildResponse(h, 400, false, errorMessages)
+    return buildResponse(h, 200, false, errorMessages)
   }
   return h.response().takeover()
 }

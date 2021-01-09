@@ -9,41 +9,35 @@ const Tienda = sequelize.define("tienda", {
         unique: true,
         autoIncrement: true,
     },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false,
+    userId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull:false
     },
     eslogan: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     category: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+        type: DataTypes.ARRAY(DataTypes.JSON),
     },
     webPage: {
         type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: 1
     },
     socialNetwork: {
-        type: DataTypes.ARRAY(DataTypes.JSON),
-        allowNull: false
+        type: DataTypes.JSON,
     },
     policy: {
         type: DataTypes.STRING,
-        allowNull: false
     },
-    bannerDir: {
+    bannerUrl: {
         type: DataTypes.STRING,
-        allowNull: false
     },
     about: {
         type: DataTypes.STRING,
-        allowNull: false
     }
 
 }, {
+    freezeTableName: true,
     // Other model options go here
     //  sequelize, // We need to pass the connection instance
     modelName: 'tienda' // We need to choose the model name

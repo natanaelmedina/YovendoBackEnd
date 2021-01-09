@@ -3,7 +3,7 @@ const models = require('./models')
 
 module.exports = () => {
     try {
-        const { Chat, Messages,User,Publication } = models
+        const { Chat, Messages,User,Publication,Tienda } = models
 
         //relaciones entre chat mensajes,usuarios y publicaciones.
         Messages.belongsTo(Chat, { foreignKey: "chatId", targetKey: "id" })
@@ -16,9 +16,9 @@ module.exports = () => {
         Publication.hasMany(Chat)
         //relaciones entre chat mensajes,usuarios y publicaciones.------
 
-
-        
-
+        //tienda
+        Tienda.belongsTo(User, { foreignKey: "userId", targetKey: "id" })
+        User.hasOne(Tienda, { foreignKey: "id", targetKey: "userId" })
 
     } catch (error) {
         console.log(error.message)

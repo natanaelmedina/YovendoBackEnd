@@ -1,12 +1,12 @@
-const { User } = require('../db/models')
-const FileType = require('file-type')
-const uuid = require('uuid')
+const { User, Tienda } = require('../db/models')
 const save = require('save-file')
 const path = require('path')
 const { server, twilio } = require('../../config')
 const utils = require('../../utils')
 const moment = require('moment')
 const Bcrypt = require('bcrypt')
+const mimeTypes = require('mime-types')
+
 
 const client = require('twilio')(twilio.accountSid, twilio.authToken)
 
@@ -42,12 +42,12 @@ const updateUser = async (req, h) => {
     try {
         const data = req.payload
         const { id } = req.params
-        if (data.profileImage && data.profileImage._data) {
-            const { ext } = await FileType.fromBuffer(data.profileImage._data)
-            const fileName = "profile" + id + "." + ext
-            const fullDir = path.join(__dirname, '../../public/profileImage/', fileName)
-            await save(fullDir, data.profileImage._data)
-            data.profileImage = server.domain + '/public/profileImage/' + fileName
+        if (typeof data.file === "object") {
+            const fileName = "profile." + mimeTypes.extension(data.file.hapi.headers["content-type"]) || 'png'
+            const fullDir = path.join(__dirname, `../../public/users/${id}/`, fileName)
+            await save(fullDir, data.file._data)
+            data.profileImage = `${server.domain}/public/users/${id}/${fileName}`
+            delete data.file
         }
 
         await User.update(data, { where: { id } })
@@ -128,7 +128,10 @@ const login = async (req, h) => {
     try {
         const { email, password } = req.payload
         const user = await User.findOne({
-            where: { email }
+            where: { email },
+            include: [{
+                model: Tienda
+            }]
         })
 
         if (!user || !(await Bcrypt.compare(password, user.password)))
