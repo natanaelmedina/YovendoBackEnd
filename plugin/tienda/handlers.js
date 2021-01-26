@@ -68,7 +68,7 @@ const update = async (req, h) => {
 const GetByUserId = async (req, h) => {
     try {
         const { id } = req.params
-        const tienda = await Tienda.findOne({ where: { id } })
+        const tienda = await Tienda.findOne({ where: { id:parseInt(id) } })
         return {
             message: "OK",
             success: true,

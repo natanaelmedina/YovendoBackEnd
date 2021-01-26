@@ -142,11 +142,13 @@ const login = async (req, h) => {
 
 
 
-        user.dataValues.exp = moment().add(24, "hour").unix()
+        user.dataValues.exp = moment().add(5, "year").unix()
         delete user.dataValues.password
 
         const token = utils.generateJWT({
-            ...user.dataValues
+            id:user.dataValues.id,
+            email:user.dataValues.email,
+            userType:user.dataValues.userType,
         })
         user.dataValues.token = token
 

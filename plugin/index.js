@@ -6,5 +6,7 @@ module.exports=[
     require('./chat'),
     require('./publication'),
     require('./messages'),
-    require('./tienda')
+    require('./tienda'),
+    require('./category'),
+    require('./filter')
 ]

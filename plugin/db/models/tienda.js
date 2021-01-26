@@ -37,10 +37,8 @@ const Tienda = sequelize.define("tienda", {
     }
 
 }, {
-    freezeTableName: true,
-    // Other model options go here
-    //  sequelize, // We need to pass the connection instance
-    modelName: 'tienda' // We need to choose the model name
+    sequelize, 
+    modelName: 'tienda'
 });
 
 module.exports = Tienda

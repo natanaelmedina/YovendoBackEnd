@@ -15,7 +15,6 @@ module.exports = [
         },
        
     },
-
     {
         method: 'POST',
         path: '/Api/Messages/Send',
@@ -30,6 +29,5 @@ module.exports = [
             },
             
         }
-    },
-
+    }
 ]

@@ -26,17 +26,14 @@ module.exports = [
         options: {
             description: 'Traer una publication por id',
             tags: ['api', 'GetPublicationById'],
-            auth: "jwt"
         },
-       
-
     },
     {
         method: 'GET',
-        path: '/Api/Publication/GetByUser/{userId}',
-        handler: handlers.getPublicationById,
+        path: '/Api/Publication/GetByUser',
+        handler: handlers.getPublicationByUser,
         options: {
-            description: 'Traer una publication por id',
+            description: 'Traer las publicationes de un usuario',
             tags: ['api', 'GetPublicationByUser'],
             auth: "jwt"
         },
@@ -51,7 +48,28 @@ module.exports = [
             tags: ['api', 'GetPublications'],
             auth: "jwt"
         },
-    }
+    },
+    {
+        method: 'DELETE',
+        path: '/Api/Publication/{id}',
+        handler: handlers.delete,
+        options: {
+            description: 'Elimina una publicación de un usuario',
+            tags: ['api', 'PublicationDelete'],
+            auth: "jwt"
+        },
+    },
+    {
+        method: 'DELETE',
+        path: '/Api/Publication/All',
+        handler: handlers.deleteAll,
+        options: {
+            description: 'Elimina todas las publicaciónes de un usuario',
+            tags: ['api', 'PublicationDeleteAll'],
+            auth: "jwt"
+        },
+    },
+    
 
 
 ]

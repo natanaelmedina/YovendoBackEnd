@@ -29,6 +29,19 @@ module.exports = [
             }
             
         }
-    }
+    },
+
+    {
+        method: 'PATCH',
+        path: '/Api/Chat/Seen/{id}',
+        handler: handlers.seen,
+        options: {
+            description: "coloca el chat visto por el usuario.",
+            tags: ['chats', 'send Seen'],
+            auth: "jwt",
+            
+        }
+    },
+    
 
 ]

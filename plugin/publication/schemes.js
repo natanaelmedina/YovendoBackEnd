@@ -12,7 +12,6 @@ const create = Joi.object({
     filters:Joi.array().optional()
 })
 
-
 module.exports={
     create 
 }

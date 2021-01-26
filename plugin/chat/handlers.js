@@ -52,9 +52,37 @@ const create = async (req, h) => {
     }
 }
 
+const seen = async (req, h) => {
+    try {
+
+        const { id } = req.params
+        const { id:userId } = req.user
+        await Chat.update({
+            pendingSeen: null
+        }, {
+            where: {
+                id,
+                pendingSeen: userId
+            }
+        })
+        return {
+            message: "chat visto",
+            success: true,
+            data: null
+        }
+    } catch (error) {
+        return {
+            message: error.message,
+            success: false,
+            data: null
+        }
+    }
+}
+
 
 
 module.exports = {
     getChat,
-    create
+    create,
+    seen
 }

@@ -32,9 +32,9 @@ module.exports = () => {
 
     models.Messages.addHook('afterCreate', async ({ dataValues }) => {
         serverEvent.send({
-            to: [dataValues.toUserId, dataValues.fromUserId],
+            to: [dataValues.toUserId],
             payload: [dataValues],
-            type: "LOAD_MESSAGE"
+            type: "RECEIVE_NEW_MESSAGE"
         })
     })
 

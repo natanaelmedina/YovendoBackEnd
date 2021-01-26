@@ -48,6 +48,10 @@ const generateJWT = (payload) => {
   return jwt.sign(payload, process.env.JWT, options);
 }
 
+const tokenVerify = (token) => {
+  return jwt.verify(token,process.env.JWT)
+}
+
 const sendEmail = (d) => {
   var mailOptions = {
     from: config,
@@ -92,5 +96,6 @@ module.exports = {
   buildResponse,
   generateJWT,
   sendEmail,
-  serverEvent
+  serverEvent,
+  tokenVerify
 }
