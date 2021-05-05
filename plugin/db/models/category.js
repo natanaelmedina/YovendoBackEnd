@@ -13,18 +13,21 @@ const Category = sequelize.define("category", {
     name: {
         type: DataTypes.STRING(50),
         allowNull: false,
-        unique:true
+        unique: true
+    },
+    iconUrl: {
+        type: DataTypes.STRING,
     },
     parentId: {
         type: DataTypes.INTEGER,
         hierarchy: true
-        
+
     },
 },
     {
         sequelize,
         modelName: 'category',
-        
+
     }
 );
 

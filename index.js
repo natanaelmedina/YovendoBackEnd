@@ -1,9 +1,10 @@
 'use strict';
 
 
-process.stdout.write('\x1Bc'); 
+process.stdout.write('\x1Bc');
 process.env.smsToken = 'bb3d95d58e0430294cd6f8ca6aaddd49'
 process.env.JWT = 'yovendoRd2020'
+process.env.apiVersion = process.env.apiVersion || "0.0.3"
 
 
 const Hapi = require('@hapi/hapi')
@@ -11,27 +12,58 @@ const Plugin = require('./plugin')
 const config = require('./config')
 const ServerEvent = require('./utils').serverEvent
 const stream = require('stream').PassThrough
+const Boom = require('@hapi/boom');
+
+
 
 
 
 global.ServerEvent = ServerEvent
 const init = async () => {
 
-    const server = Hapi.server(config.server.http);
+    const server = Hapi.server(config.server.https);
 
     await server.register(Plugin);
+
     server.route([
         {
             method: 'GET',
-            path: '/',
-            handler: () => "Server OK."
+            path: '/{path*}',
+            options: {
+                ext: {
+                    onPreResponse: {
+                        method(req, h) {
+                            const isApi = req.path.substr(1)
+                                .toLowerCase()
+                                .trim()
+                                .split('/')[0]
+                                .replace(/\//g, "") === "api"
+                            const response = req.response
+                            if (response && req.response.output && req.response.output.statusCode === 404) {
+                                if (isApi)
+                                    return Boom.notFound("No encontrado")
+                                return h.file('index.html');
+                            }
+                            return h.continue
+                        },
+                    }
+                }
+            },
+            handler: {
+                directory: {
+                    path: ".",
+                    listing: false,
+                    index: true
+
+                }
+            }
         },
         {
             method: 'GET',
             path: '/public/{path*}',
             handler: {
                 directory: {
-                    path: 'public',
+                    path: __dirname + '/public',
                     listing: false,
                     index: false
                 }
@@ -73,13 +105,21 @@ const init = async () => {
                 const resp = h.response(myStream).type('text/event-stream')
                 return resp
 
-           }
+            }
 
         }
     ])
-
     await server.start();
+    server.events.on('response', function (request) {
+        console.log(
+            request.info.remoteAddress
+            + ': ' + request.method.toUpperCase()
+            + ' ' + request.path
+            + ' --> ' + request.response.statusCode
+        );
+    });
     console.log('Server running on %s', server.info.uri);
+
 };
 
 process.on('unhandledRejection', (err) => {

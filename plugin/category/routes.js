@@ -1,8 +1,28 @@
 const handlers = require('./handlers')
 const schemas = require('./schemes')
 const {handleRequestError} = require('../../utils')
+const path = require("path")
 
 module.exports = [
+    {
+        method: 'GET',
+        path: '/category/icon/{path*}',
+        options:{
+
+            cache:{
+                privacy:"public",
+                expiresIn:999999999999999
+                
+            }
+        },
+        handler: {
+            directory: {
+                path: path.join(__dirname,'/icon') ,
+                listing: false,
+                index: false
+            }
+        }
+    },
     {
         method: 'POST',
         path: '/Api/Category/Create',

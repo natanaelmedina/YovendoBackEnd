@@ -1,3 +1,7 @@
+
+const path = require("path")
+const fs = require("fs")
+
 module.exports = {
     db: {
         restoreDb: true,
@@ -14,29 +18,23 @@ module.exports = {
         }
     },
     server: {
-        domain: "http://yovendord.com:3000",
+        domain: "https://yovendord.com",
         https: {
-            port: 3001,
+            port: 443,
             host: '0.0.0.0',
             tls: {
-                //  key: fs.readFileSync('c:/ssl/private.key'),
-                //  cert: fs.readFileSync('c:/ssl/cert.crt')
+                key: fs.readFileSync(path.join(__dirname, "../ssl/private.key")),
+                cert: fs.readFileSync(path.join(__dirname, "../ssl/cert.crt"))
             },
             routes: {
                 cors: true,
                 security: {
                     hsts: true
+                },
+                files: {
+                    relativeTo: path.join(__dirname, '../FrontEnd/v1/build')
                 }
-            }
-        },
-        http: {
-            port: 3000,
-            host: '0.0.0.0',
-            routes: {
-                cors: true,
-                security: {
-                    hsts: false
-                }
+
             }
         }
     },

@@ -56,12 +56,7 @@ const _delete = async (req, h) => {
 const get = async (req, h) => {
     try {
         const data = await Category.findAll({
-          //  hierarchy: true,
-            include: [{
-                model: Filter,
-                as: "filters",
-                required: true
-            }]
+            hierarchy: true
         })
         return {
             message: "Lista de categorías",

@@ -8,5 +8,7 @@ module.exports=[
     require('./messages'),
     require('./tienda'),
     require('./category'),
-    require('./filter')
+    require('./initialize'),
+    require('./filter'),
+   
 ]
