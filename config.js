@@ -1,7 +1,7 @@
 
 const path = require("path")
 const fs = require("fs")
-
+console.log(process.env.gmailPass)
 module.exports = {
     db: {
         restoreDb: true,
@@ -20,7 +20,7 @@ module.exports = {
     server: {
         domain: "https://yovendord.com",
         https: {
-            port: 443,
+            port: process.env.port || 443,
             host: '0.0.0.0',
             tls: {
                 key: fs.readFileSync(path.join(__dirname, "../ssl/private.key")),
@@ -40,7 +40,7 @@ module.exports = {
     },
     gmailCred: {
         user: "smartsoftdo@gmail.com",
-        pass: ""
+        pass: process.env.gmailPass
     },
     twilio: {
         accountSid: 'AC7890488d169dffbd2468847920cbf414',
