@@ -49,27 +49,30 @@ const generateJWT = (payload) => {
 }
 
 const tokenVerify = (token) => {
-  return jwt.verify(token,process.env.JWT)
+  return jwt.verify(token, process.env.JWT)
 }
 
 const sendEmail = (d) => {
-  var mailOptions = {
-    from: config,
-    to: d.to,
-    subject: d.subject,
-    text: d.text,
-    html: d.html,
-    files: d.files,
-    attachments: d.attachments
-  };
-  // sending...
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log('ERROR!!!  -->' + error);
-    } else {
-      console.log(d.to + '----> MAIL SENT!');
-    }
+  return new Promise((resolve, reject) => {
+    var mailOptions = {
+      from: config,
+      to: d.to,
+      subject: d.subject,
+      text: d.text,
+      html: d.html,
+      files: d.files,
+      attachments: d.attachments
+    };
+    // sending...
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        reject('ERROR!!!  -->' + error);
+      } else {
+        resolve(d.to + '----> MAIL SENT!');
+      }
+    })
   })
+
 }
 
 class ServerEvent extends Emitter {

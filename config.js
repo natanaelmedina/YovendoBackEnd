@@ -39,8 +39,8 @@ module.exports = {
         }
     },
     gmailCred: {
-        user: "rd.yovendo@gmail.com",
-        pass: "Im@901811"
+        user: "smartsoftdo@gmail.com",
+        pass: ""
     },
     twilio: {
         accountSid: 'AC7890488d169dffbd2468847920cbf414',

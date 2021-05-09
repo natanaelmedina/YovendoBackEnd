@@ -6,6 +6,7 @@ const utils = require('../../utils')
 const moment = require('moment')
 const Bcrypt = require('bcrypt')
 const mimeTypes = require('mime-types')
+const Joi = require('joi')
 
 
 const client = require('twilio')(twilio.accountSid, twilio.authToken)
@@ -14,6 +15,7 @@ const register = async (req, h) => {
     try {
 
         const data = req.payload
+        data.email=String(data.email).trim().toLowerCase()
         data.password = await Bcrypt.hash(data.password, 10)
         const find = await User.findOne({ where: { email: data.email } })
         if (find)
@@ -146,9 +148,9 @@ const login = async (req, h) => {
         delete user.dataValues.password
 
         const token = utils.generateJWT({
-            id:user.dataValues.id,
-            email:user.dataValues.email,
-            userType:user.dataValues.userType,
+            id: user.dataValues.id,
+            email: user.dataValues.email,
+            userType: user.dataValues.userType,
         })
         user.dataValues.token = token
 
@@ -169,13 +171,20 @@ const login = async (req, h) => {
 
 const SendCodeEmail = async (req, h) => {
     try {
-        const { email } = req.payload
-        const emailCode = Math.floor(Math.random() * 89999999 + 10000000)
+        await new Promise(e=>setTimeout(e, 20000))
+        const email = String(req.payload.email).trim().toLowerCase()
+        const isValidEmail = Joi.string().email().validate(email)
+        if (isValidEmail.error)
+            throw new Error("Email no es valido.!")
+        const emailCode = Math.floor(Math.random() * 8999 + 1000)
+        const user = await User.findOne({ where: { email } })
+        if (user)
+            throw new Error(`Email ya esta en uso.!`)
 
         await utils.sendEmail({
             html: `Su código de verificación es: <b>${emailCode}</b>`,
             to: email,
-            subject: "YOVENDORD REGISTRO"
+            subject: "YoVendoRd código de verificación"
         })
         return {
             message: "Código de confirmación",
