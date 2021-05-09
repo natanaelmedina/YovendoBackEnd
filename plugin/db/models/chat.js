@@ -30,15 +30,14 @@ const Chat = sequelize.define("chat", {
         allowNull: false
 
     },
-    seen: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
+    pendingSeen: {
+        type: DataTypes.INTEGER,
+        allowNull: true
     }
 
 }, {
-    // Other model options go here
-    //  sequelize, // We need to pass the connection instance
+
+    sequelize, 
     modelName: 'chat' // We need to choose the model name
 });
 

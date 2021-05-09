@@ -1,7 +1,11 @@
+
+const path = require("path")
+const fs = require("fs")
+
 module.exports = {
     db: {
-        restoreDb: false,
-        port: "5432",
+        restoreDb: true,
+        port: "5433",
         host: "localhost",
         name: "YOVENDO",
         user: {
@@ -14,34 +18,38 @@ module.exports = {
         }
     },
     server: {
-        domain:"http://172.25.20.94:3000",
+        domain: "https://yovendord.com",
         https: {
-            port: 3001,
+            port: 443,
             host: '0.0.0.0',
             tls: {
-              //  key: fs.readFileSync('c:/ssl/private.key'),
-              //  cert: fs.readFileSync('c:/ssl/cert.crt')
+                key: fs.readFileSync(path.join(__dirname, "../ssl/private.key")),
+                cert: fs.readFileSync(path.join(__dirname, "../ssl/cert.crt"))
             },
             routes: {
                 cors: true,
                 security: {
                     hsts: true
+                },
+                files: {
+                    relativeTo: path.join(__dirname, '../FrontEnd/v1/build')
                 }
-            }
-        },
-        http: {
-            port: 3000,
-            host: '0.0.0.0',
-            routes: {
-                cors: true,
-                security: {
-                    hsts: false
-                }
+
             }
         }
     },
-    gmailCred:{
-        user:"yovendord@gmail.com",
-        pass:"yovendord2020"
-    }
+    gmailCred: {
+        user: "smartsoftdo@gmail.com",
+        pass: ""
+    },
+    twilio: {
+        accountSid: 'AC7890488d169dffbd2468847920cbf414',
+        get authToken() { return process.env.smsToken },
+        chanels: [
+            {
+                name: "sms",
+                phone: 14155238886
+            }
+        ]
+    },
 }

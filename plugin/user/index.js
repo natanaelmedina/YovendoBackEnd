@@ -17,7 +17,7 @@ exports.plugin = {
             verifyOptions: { algorithms: ['HS256'] }
         })
 
-        server.auth.default('jwt')
+        //server.auth.default('jwt')
         server.route(routes)
     }
 }

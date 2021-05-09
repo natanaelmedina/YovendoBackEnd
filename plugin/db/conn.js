@@ -1,4 +1,7 @@
 const { Sequelize } = require('Sequelize')
+require('sequelize-hierarchy')(Sequelize);
+
+
 const { db } = require('../../config')
 
 const conn = new Sequelize(db.name, db.user.name, db.user.password, {
@@ -6,7 +9,6 @@ const conn = new Sequelize(db.name, db.user.name, db.user.password, {
     dialect: "postgres",
     port: db.port,
     logging: console.log,
-
 })
 
 module.exports = conn

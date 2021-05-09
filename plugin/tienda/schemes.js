@@ -1,15 +1,28 @@
 const Joi = require('joi')
 
-const CreateTienda = Joi.object({
-    name: Joi.string().required(),
-    eslogan: Joi.string().optional(),
-    category: Joi.number().required(),
-    webPage: Joi.string().optional(),
-    socialNetwork: Joi.array().optional(),
-    policy: Joi.string().optional(),
-    bannerDir: Joi.string().optional(),
-    about:Joi.string().optional()
+const create = Joi.object({
+    userId: Joi.number().required(),
+    eslogan: Joi.string().allow('').optional(),
+    category: Joi.any().allow('').optional(),
+    webPage: Joi.string().allow('').optional(),
+    socialNetwork: Joi.any().optional(),
+    policy: Joi.string().allow('').optional(),
+    bannerUrl: Joi.string().allow('').optional(),
+    about:Joi.string().allow('').optional(),
+    file:Joi.any().optional(),
+})
+const update =Joi.object({
+    userId: Joi.number().required(),
+    eslogan: Joi.string().allow('').optional(),
+    category: Joi.any().allow('').optional(),
+    webPage: Joi.string().allow('').optional(),
+    socialNetwork: Joi.any().optional(),
+    policy: Joi.string().allow('').optional(),
+    bannerUrl: Joi.string().allow('').optional(),
+    about:Joi.string().allow('').optional(),
+    file:Joi.any().optional()
 })
 module.exports = {
-    CreateTienda
+    create,
+    update
 }

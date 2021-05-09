@@ -43,12 +43,12 @@ const User = sequelize.define("User",{
         allowNull: true
     },
     phone: {
-        type: DataTypes.STRING(10),
+        type: DataTypes.STRING(15),
         allowNull: true,
         unique: true
     },
     ws: {
-        type: DataTypes.STRING(10),
+        type: DataTypes.STRING(15),
         allowNull: true,
         unique: true
     },

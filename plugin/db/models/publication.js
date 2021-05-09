@@ -1,6 +1,7 @@
-const { DataTypes, Sequelize } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../conn')
 const uuid = require('uuid')
+const moment = require('moment')
 
 
 const Publication = sequelize.define("publication", {
@@ -25,6 +26,10 @@ const Publication = sequelize.define("publication", {
     },
     images: {
         type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: false
+    },
+    thumbnail:{
+        type: DataTypes.STRING,
         allowNull: false
     },
     status: {
@@ -52,10 +57,13 @@ const Publication = sequelize.define("publication", {
     filters: {
         type: DataTypes.ARRAY(DataTypes.JSON),
         allowNull: true
+    },
+    endDate:{
+        type:DataTypes.DATEONLY,
+        defaultValue:()=> moment().add(15,'days')
     }
 }, {
-    // Other model options go here
-    // sequelize: conn, // We need to pass the connection instance
+    sequelize,
     modelName: 'publication' // We need to choose the model name
 });
 

@@ -1,6 +1,6 @@
 const handlers = require('./handlers')
 const schemas = require('./schemes')
-const {handleRequestError} = require('../../utils')
+const { handleRequestError } = require('../../utils')
 
 module.exports = [
     {
@@ -10,12 +10,15 @@ module.exports = [
         options: {
             description: 'crea un publication',
             tags: ['api', 'create'],
+            //auth: "jwt",
             validate: {
                 payload: schemas.create,
                 failAction: handleRequestError
-            }
+            },
+            
         }
     },
+
     {
         method: 'GET',
         path: '/Api/Publication/GetById/{id}',
@@ -23,16 +26,18 @@ module.exports = [
         options: {
             description: 'Traer una publication por id',
             tags: ['api', 'GetPublicationById'],
-        }
+        },
     },
     {
         method: 'GET',
-        path: '/Api/Publication/GetByUser/{userId}',
-        handler: handlers.getPublicationById,
+        path: '/Api/Publication/GetByUser',
+        handler: handlers.getPublicationByUser,
         options: {
-            description: 'Traer una publication por id',
+            description: 'Traer las publicationes de un usuario',
             tags: ['api', 'GetPublicationByUser'],
-        }
+            auth: "jwt"
+        },
+       
     },
     {
         method: 'GET',
@@ -41,8 +46,30 @@ module.exports = [
         options: {
             description: 'Traer una publication por id',
             tags: ['api', 'GetPublications'],
-        }
-    }
+            auth: "jwt"
+        },
+    },
+    {
+        method: 'DELETE',
+        path: '/Api/Publication/{id}',
+        handler: handlers.delete,
+        options: {
+            description: 'Elimina una publicación de un usuario',
+            tags: ['api', 'PublicationDelete'],
+            auth: "jwt"
+        },
+    },
+    {
+        method: 'DELETE',
+        path: '/Api/Publication/All',
+        handler: handlers.deleteAll,
+        options: {
+            description: 'Elimina todas las publicaciónes de un usuario',
+            tags: ['api', 'PublicationDeleteAll'],
+            auth: "jwt"
+        },
+    },
+    
 
 
 ]

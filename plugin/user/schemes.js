@@ -13,14 +13,12 @@ const CreateUser = Joi.object({
 const updateUser = Joi.object({
     name: Joi.string().max(50).optional().allow(null, ""),
     address: Joi.string().max(200).optional().allow(null, ""),
-    phone: Joi.string().max(10).optional().allow(null, ""),
-    ws: Joi.string().max(10).optional().allow(null, ""),
+    phone: Joi.string().max(15).min(11).optional().allow(null, ""),
+    ws: Joi.string().max(15).min(11).optional().allow(null, ""),
     birthDay: Joi.date().optional().optional().allow(null, ""),
-    profileImage: Joi.any().optional().allow(null, ""),
+    file: Joi.any().optional().allow(null, ""),
     cedulaRnc: Joi.string().max(11).optional().allow(null, ""),
     address: Joi.string().max(200).optional().allow(null, ""),
-    phone: Joi.string().max(10).optional().allow(null, ""),
-    ws: Joi.string().max(10).optional().allow(null, ""),
     cityId: Joi.number().optional().allow(null, "")
 
 })
