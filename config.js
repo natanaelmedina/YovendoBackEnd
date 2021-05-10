@@ -1,7 +1,7 @@
 
 const path = require("path")
 const fs = require("fs")
-console.log(process.env.gmailPass)
+
 module.exports = {
     db: {
         restoreDb: true,

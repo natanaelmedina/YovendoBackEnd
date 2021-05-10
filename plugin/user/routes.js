@@ -11,7 +11,20 @@ module.exports = [
             description: 'crea un usuario',
             tags: ['user', 'CreateUser'],
             validate: {
-                payload: schemas.CreateUser,
+                payload: schemas.Register,
+                failAction: handleRequestError
+            }
+        }
+    },
+    {
+        method: 'POST',
+        path: '/Api/User/RegisterFromGoogle',
+        handler: handlers.registerFromGoogle,
+        options: {
+            description: 'crea un usuario desde google',
+            tags: ['user', 'CreateUser'],
+            validate: {
+                payload: schemas.RegisterFromGoogle,
                 failAction: handleRequestError
             }
         }
@@ -68,19 +81,6 @@ module.exports = [
         }
     },
     {
-        method: 'POST',
-        path: '/Api/User/LoginFromGoogle',
-        handler: handlers.login,
-        options: {
-            description: 'Loguear el usuario al sistema via google',
-            tags: ['user', 'googleLogin'],
-            validate: {
-                payload: schemas.login,
-                failAction: handleRequestError
-            }
-        }
-    },
-    {
         method: 'GET',
         path: '/Api/User/{id}',
         handler: handlers.getUser,
@@ -93,11 +93,15 @@ module.exports = [
     ,
     {
         method: 'POST',
-        path: '/Api/User/SendCodeEmail',
-        handler: handlers.SendCodeEmail,
+        path: '/Api/User/PreRegister',
+        handler: handlers.preRegister,
         options: {
             description: "Enviá código de confirmación para verificar el correo",
             tags: ['user', 'confirmar email'],
+            validate: {
+                payload: schemas.CreateUser,
+                failAction: handleRequestError
+            }
 
         }
     },

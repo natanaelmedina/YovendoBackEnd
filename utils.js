@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const config = require('./config');
+const path = require('path');
 const Emitter = require('events').EventEmitter;
 Emitter.defaultMaxListeners = 9E6
 
@@ -54,19 +55,31 @@ const tokenVerify = (token) => {
 
 const sendEmail = (d) => {
   return new Promise((resolve, reject) => {
-    var mailOptions = {
-      from: config,
+    const attachments = [
+      {
+        filename: "logo.png",
+        path: path.join(__dirname, "./public/logo.png"),
+        cid: "logo",
+      },
+      {
+        filename: "header.png",
+        path: path.join(__dirname, "./public/header.png"),
+        cid: "header",
+      },
+    ]
+    const mailOptions = {
+      from: `"YoVendoRD" <${config.gmailCred.user}>`,
       to: d.to,
       subject: d.subject,
       text: d.text,
       html: d.html,
       files: d.files,
-      attachments: d.attachments
+      attachments: d.attachments === true ? attachments : d.attachments
     };
     // sending...
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
-        reject('ERROR!!!  -->' + error);
+        reject(new Error("Error interno intente mas tarde"));
       } else {
         resolve(d.to + '----> MAIL SENT!');
       }

@@ -7,33 +7,100 @@ const moment = require('moment')
 const Bcrypt = require('bcrypt')
 const mimeTypes = require('mime-types')
 const Joi = require('joi')
-
+const axios = require("axios").default
+const fs = require('fs')
+const registerGoogleTpl = fs.readFileSync(path.join(__dirname, "./registerGoogle.hbs"), "utf-8");
+const registerTpl = fs.readFileSync(path.join(__dirname, "./register.hbs"), "utf-8");
+const handlebars = require("handlebars");
 
 const client = require('twilio')(twilio.accountSid, twilio.authToken)
 
 const register = async (req, h) => {
     try {
 
-        const data = req.payload
-        data.email=String(data.email).trim().toLowerCase()
-        data.password = await Bcrypt.hash(data.password, 10)
+        const data = utils.tokenVerify(req.payload.token)
         const find = await User.findOne({ where: { email: data.email } })
-        if (find)
-            throw {
-                message: `El correo ${data.email} ya esta en uso.`,
-                name: "email error"
+
+        const user = find ? find : await User.create(data)
+        user.dataValues.exp = moment().add(5, "year").unix()
+        delete user.dataValues.password
+
+        const token = utils.generateJWT({
+            id: user.dataValues.id,
+            email: user.dataValues.email,
+            userType: user.dataValues.userType,
+        })
+        user.dataValues.token = token
+        user.dataValues.goToProfile = find ? true : false
+        return {
+            message: "Tu cuenta ha sido creada correctamente, te recomendamos que complete tu perfil para subir el nivel de confianza entre vendedores y compradores",
+            success: true,
+            data: user
+        }
+
+    } catch (error) {
+        return {
+            message: error.message,
+            success: false,
+            data: null
+        }
+    }
+}
+const registerFromGoogle = async (req, h) => {
+    try {
+
+        let { id_token, email, name, profileImage } = req.payload
+        const { data } = await axios.get("https://oauth2.googleapis.com/tokeninfo", {
+            params: {
+                id_token
             }
-        const createData = await User.create(data)
+        })
+        if (email !== data.email.toLowerCase())
+            throw new Error("Error no autorizado")
+
+        const user = await User.findOne({ where: { email } })
+        const passwordGen = Math.random().toString(16).substr(2, 9);
+        const password = await Bcrypt.hash(passwordGen, 10)
+        const createData = user ? user : await User.create({ email, name, password, profileImage })
+        const token = utils.generateJWT({
+            id: createData.dataValues.id,
+            email: email,
+            userType: createData.dataValues.userType,
+        })
+        createData.dataValues.token = token
+        delete createData.dataValues.password
+        if (!user) {
+            createData.dataValues.newUser = true
+            const tpl = handlebars.compile(registerGoogleTpl);
+            const html = tpl({
+                name: createData.dataValues.name,
+                domain: `${process.env.frontEndDomain}`,
+                loginUrl: `${process.env.frontEndDomain}/Login`,
+                password: passwordGen,
+            })
+            utils.sendEmail({
+                html: html,
+                to: email,
+                subject: "YoVendoRD registro existo.!",
+                attachments: true
+            })
+        }
+        const message = !user
+            ? 'Tu cuenta ha sido creada correctamente, Hemos enviado tu contraseña temporal al email "'+email+'" \
+               la cual puedes cambiar en tu perfil.\
+               \n\nTe recomendamos que complete tu perfil para subir el nivel de confianza entre vendedores y compradores'
+            : "Inicio de sesión correcto.!"
+
 
         return {
-            message: "Te has registrado correctamente",
+            message,
             success: true,
             data: createData
         }
 
     } catch (error) {
         return {
-            message: error.message,
+            message: error.isAxiosError ? error.response.data.error : error.message,
             success: false,
             data: null
         }
@@ -169,27 +236,41 @@ const login = async (req, h) => {
     }
 }
 
-const SendCodeEmail = async (req, h) => {
+const preRegister = async (req, h) => {
     try {
-        await new Promise(e=>setTimeout(e, 20000))
-        const email = String(req.payload.email).trim().toLowerCase()
-        const isValidEmail = Joi.string().email().validate(email)
-        if (isValidEmail.error)
-            throw new Error("Email no es valido.!")
-        const emailCode = Math.floor(Math.random() * 8999 + 1000)
+        const { name, email, password } = req.payload
         const user = await User.findOne({ where: { email } })
         if (user)
             throw new Error(`Email ya esta en uso.!`)
 
-        await utils.sendEmail({
-            html: `Su código de verificación es: <b>${emailCode}</b>`,
-            to: email,
-            subject: "YoVendoRd código de verificación"
+
+        const passwordEnc = await Bcrypt.hash(password, 10)
+        const token = utils.generateJWT({
+            name,
+            password: passwordEnc,
+            email: email,
+            exp: moment().add(1, "day").unix()
         })
+
+        const tpl = handlebars.compile(registerTpl);
+        const html = tpl({
+            name: name,
+            domain: `${process.env.frontEndDomain}`,
+            loginUrl: `${process.env.frontEndDomain}/Login`,
+            confirmUrl: `${process.env.frontEndDomain}/Register/Token/${token}`
+
+        })
+        await utils.sendEmail({
+            html,
+            to: email,
+            subject: "YoVendoRd Activación de cuenta",
+            attachments: true,
+        })
+
         return {
-            message: "Código de confirmación",
+            message: "Ok.",
             success: true,
-            data: { emailCode }
+            data: null
         }
 
     } catch (error) {
@@ -230,10 +311,11 @@ const confirmWs = async (req, h) => {
 }
 module.exports = {
     register,
+    registerFromGoogle,
     getUser,
     login,
     updateUser,
     resetPassword,
-    SendCodeEmail,
+    preRegister,
     confirmWs
 }
