@@ -18,7 +18,7 @@ module.exports = {
         }
     },
     server: {
-        domain: "https://yovendord.com",
+        domain: process.env.domain || "https://yovendo.do",
         https: {
             port: process.env.port || 443,
             host: '0.0.0.0',

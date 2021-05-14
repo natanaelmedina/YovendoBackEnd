@@ -2,6 +2,11 @@
 
 
 process.stdout.write('\x1Bc');
+process.stdout.write(
+    String.fromCharCode(27) +
+    "]0; YoVendo Api v1" +
+    String.fromCharCode(7)
+  );
 process.env.smsToken = 'bb3d95d58e0430294cd6f8ca6aaddd49'
 process.env.JWT = 'yovendoRd2020'
 process.env.apiVersion = process.env.apiVersion || "0.0.3"
