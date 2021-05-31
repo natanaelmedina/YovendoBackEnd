@@ -1,12 +1,16 @@
 
 module.exports={
     User: require('./user'),
-    Chat: require('./chat'),
-    Messages: require('./messages'),
+    Category: require('./category'),
+    Features: require('./Features'),
+    CategoryFeatures: require('./CategoryFeatures'),
+    Condition: require('./Condition'),
     Publication: require('./publication'),
     publicationViewing: require('./publicationViewing'),
-    Tienda: require('./tienda'),
-    Category: require('./category'),
-    Filter: require('./filter'),
-    CategoryFilter: require('./CategoryFilter')
+    Store: require('./store'),
+    Location: require('./Location').Location,
+
+    Chat: require('./chat'),
+    Messages: require('./messages'),
+   
 }

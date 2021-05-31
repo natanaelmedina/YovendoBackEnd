@@ -36,7 +36,7 @@ const Chat = sequelize.define("chat", {
     }
 
 }, {
-
+    freezeTableName:true,
     sequelize, 
     modelName: 'chat' // We need to choose the model name
 });

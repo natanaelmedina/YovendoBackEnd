@@ -1,7 +1,7 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../conn')
 
-const Messages =sequelize.define("messages",{
+const Messages =sequelize.define("message",{
     id: {
         type: DataTypes.UUID,
         allowNull: false,
@@ -36,8 +36,7 @@ const Messages =sequelize.define("messages",{
     }
 
 }, {
-    // Other model options go here
-  //  sequelize, // We need to pass the connection instance
+    freezeTableName:true,
     modelName: 'messages' // We need to choose the model name
 });
 

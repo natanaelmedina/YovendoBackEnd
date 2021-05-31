@@ -11,10 +11,10 @@ module.exports = [
             description: 'crea un publication',
             tags: ['api', 'create'],
             //auth: "jwt",
-            validate: {
-                payload: schemas.create,
-                failAction: handleRequestError
-            },
+            // validate: {
+            //     payload: schemas.create,
+            //     failAction: handleRequestError
+            // },
             
         }
     },
@@ -47,6 +47,20 @@ module.exports = [
             description: 'Traer una publication por id',
             tags: ['api', 'GetPublications'],
             auth: "jwt"
+        },
+    },
+    {
+        method: 'GET',
+        path: '/Api/Publication/Search',
+        handler: handlers.Search,
+        options: {
+            description: 'Consulta de publicaciones',
+            tags: ['api', 'Search query Publications'],
+            auth: false,
+            cache:{
+                 //5minutos
+                expiresIn: 300000, // milliseconds 
+            },
         },
     },
     {

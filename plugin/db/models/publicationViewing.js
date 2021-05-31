@@ -15,6 +15,7 @@ const publicationViewing = sequelize.define("publicationViewing", {
         primaryKey: true,
     },
 }, {
+    freezeTableName:true,
     sequelize,
     modelName: 'publicationViewing'
 });

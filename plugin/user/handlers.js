@@ -6,12 +6,13 @@ const utils = require('../../utils')
 const moment = require('moment')
 const Bcrypt = require('bcrypt')
 const mimeTypes = require('mime-types')
-const Joi = require('joi')
 const axios = require("axios").default
 const fs = require('fs')
 const registerGoogleTpl = fs.readFileSync(path.join(__dirname, "./registerGoogle.hbs"), "utf-8");
 const registerTpl = fs.readFileSync(path.join(__dirname, "./register.hbs"), "utf-8");
 const handlebars = require("handlebars");
+const fileType = require("file-type")
+
 
 const client = require('twilio')(twilio.accountSid, twilio.authToken)
 
@@ -86,7 +87,7 @@ const registerFromGoogle = async (req, h) => {
             })
         }
         const message = !user
-            ? 'Tu cuenta ha sido creada correctamente, Hemos enviado tu contraseña temporal al email "'+email+'" \
+            ? 'Tu cuenta ha sido creada correctamente, Hemos enviado tu contraseña temporal al email "' + email + '" \
                la cual puedes cambiar en tu perfil.\
                \n\nTe recomendamos que complete tu perfil para subir el nivel de confianza entre vendedores y compradores'
             : "Inicio de sesión correcto.!"
@@ -309,6 +310,60 @@ const confirmWs = async (req, h) => {
     }
 
 }
+const createUserExternal = async (req, h) => {
+    try {
+
+        let { phone, name, profileImage } = req.payload
+        const password = await Bcrypt.hash(phone, 10)
+        phone = utils.validatePhone(phone)
+        const email = phone + '@yovendo.do'
+        const user = await User.findOrCreate({
+            where: { phone },
+            defaults: {
+                email, name, password, profileImage, phone, ws: phone
+            }
+        })
+
+        new Promise(async e => {
+          try {
+            if (profileImage && user[1]) {
+                const { data } = await axios.get(profileImage, {
+                    responseType: "arraybuffer",
+                    headers: {
+                        accept: "accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+                        "cache-control": "no-cache",
+                        "sec-fetch-dest": "image",
+                        "sec-fetch-mode": " no-cors",
+                        "sec-fetch-site": "same-site"
+                    }
+                })
+                const type = await fileType.fromBuffer(data) || { ext: "jpj" }
+                const fileName = "profile." + type.ext
+                const fullDir = path.join(__dirname, `../../public/users/${user[0].id}/`, fileName)
+                await save(fullDir, data)
+                const url = `public/users/${user[0].id}/${fileName}`
+                await User.update({ profileImage: url }, { where: { id: user[0].id } })
+            }
+          } catch (error) {
+             console.log(error) 
+          }
+        })
+
+        return {
+            message: "ok",
+            success: true,
+            data: user
+        }
+
+    } catch (error) {
+        return {
+            message: error.message,
+            success: false,
+            data: null
+        }
+    }
+
+}
 module.exports = {
     register,
     registerFromGoogle,
@@ -317,5 +372,6 @@ module.exports = {
     updateUser,
     resetPassword,
     preRegister,
-    confirmWs
+    confirmWs,
+    createUserExternal
 }

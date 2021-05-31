@@ -66,6 +66,11 @@ const init = async () => {
         {
             method: 'GET',
             path: '/public/{path*}',
+            options:{
+                cache:{
+                   expiresIn: Number.MAX_SAFE_INTEGER, // milliseconds 
+               },
+            },
             handler: {
                 directory: {
                     path: __dirname + '/public',
@@ -115,14 +120,14 @@ const init = async () => {
         }
     ])
     await server.start();
-    server.events.on('response', function (request) {
-        console.log(
-            request.info.remoteAddress
-            + ': ' + request.method.toUpperCase()
-            + ' ' + request.path
-            + ' --> ' + request.response.statusCode
-        );
-    });
+    // server.events.on('response', function (request) {
+    //     console.log(
+    //         request.info.remoteAddress
+    //         + ': ' + request.method.toUpperCase()
+    //         + ' ' + request.path
+    //         + ' --> ' + request.response.statusCode
+    //     );
+    // });
     console.log('Server running on %s', server.info.uri);
 
 };

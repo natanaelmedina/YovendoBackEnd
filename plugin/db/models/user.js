@@ -1,9 +1,17 @@
-const { Sequelize, DataTypes, Model } = require('sequelize')
+const { DataTypes } = require('sequelize')
 const sequelize = require('../conn')
+const Bcrypt = require('bcrypt')
 
+const user = [
+    {
+        name: "Natanael medina",
+        password: Bcrypt.hashSync('123456', 10),
+        email: "natanaelmedina@gmail.com",
+        userType: 2,
+    }
+]
 
-
-const User = sequelize.define("User",{
+const User = sequelize.define("user",{
     id: {
         type: DataTypes.INTEGER,
         autoIncrementIdentity: true,
@@ -73,9 +81,13 @@ const User = sequelize.define("User",{
     }
 
 }, {
-    //Other model options go here
-    // sequelize: conn, //We need to pass the connection instance
-    modelName: 'User' //We need to choose the model name
+    freezeTableName:true,
+    modelName: 'user' ,
+    hooks:{
+        async afterSync(opts) {
+            opts.force && await User.bulkCreate(user)
+        }
+    }
 });
 
 

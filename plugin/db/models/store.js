@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../conn')
 
-const Tienda = sequelize.define("tienda", {
+const Store = sequelize.define("store", {
     id: {
         type: DataTypes.INTEGER,
         autoIncrementIdentity: true,
@@ -37,9 +37,10 @@ const Tienda = sequelize.define("tienda", {
     }
 
 }, {
+    freezeTableName:true,
     sequelize, 
-    modelName: 'tienda'
+    modelName: 'store'
 });
 
-module.exports = Tienda
+module.exports = Store
 

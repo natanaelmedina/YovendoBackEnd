@@ -115,4 +115,17 @@ module.exports = [
             auth: "jwt"
         }
     }
+    ,
+    {
+        method: 'POST',
+        path: '/Api/User/createUserExternal',
+        handler: handlers.createUserExternal,
+        options: {
+            description: "extension temporal para crear usuarios de otros sitios web",
+            tags: ['user', 'createUserExternal'],
+            auth: false
+        }
+    }
+
+    
 ]

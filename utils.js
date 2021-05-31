@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const config = require('./config');
 const path = require('path');
+const { parsePhoneNumber } = require("libphonenumber-js");
 const Emitter = require('events').EventEmitter;
 Emitter.defaultMaxListeners = 9E6
 
@@ -88,6 +89,19 @@ const sendEmail = (d) => {
 
 }
 
+function validatePhone(phone) {
+  const phoneNumber = parsePhoneNumber(phone, "DO");
+  const isValid = phoneNumber.isValid();
+  if (isValid) {
+    return phoneNumber.number;
+  } else {
+    throw {
+      name: "Teléfono no valido",
+      message: `Teléfono numero ${phoneNumber.number} para : ${phoneNumber.country} no es valido.`,
+    };
+  }
+}
+
 class ServerEvent extends Emitter {
   constructor(props) {
     super(props)
@@ -113,5 +127,6 @@ module.exports = {
   generateJWT,
   sendEmail,
   serverEvent,
-  tokenVerify
+  tokenVerify,
+  validatePhone
 }
