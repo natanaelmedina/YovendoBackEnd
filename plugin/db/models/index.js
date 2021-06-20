@@ -1,6 +1,7 @@
 
 module.exports={
     User: require('./user'),
+    UserType: require('./userType'),
     Category: require('./category'),
     Features: require('./Features'),
     CategoryFeatures: require('./CategoryFeatures'),

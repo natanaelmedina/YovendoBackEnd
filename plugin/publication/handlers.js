@@ -1,4 +1,4 @@
-const { Publication, publicationViewing, Condition, Location } = require('../db/models')
+const { Publication, publicationViewing, Condition, Location, User, Category, UserType } = require('../db/models')
 const { Op } = require('sequelize')
 const { Sequelize } = require('../db/conn')
 const utils = require('../../utils')
@@ -80,18 +80,79 @@ const getPublicationById = async (req, h) => {
 
             }
         }
-        const publication = await Publication.findAll({ where: { id } })
+        const options = {
+            limit: 20,
+            include: [
+                { model: Condition, attributes: ['name', 'id'] },
+                { model: Location, attributes: ['name', 'id'] },
+                { model: Category, attributes: ['name', 'id'] },
+                {
+                    model: User, attributes: ['name', 'id', 'profileImage', 'phone', 'createdAt'],
+                    include: [
+                        { model: UserType, attributes: ['name'] }
+                    ]
+                },
+            ],
+            attributes: [
+                'createdAt',
+                'id',
+                'userId',
+                'title',
+                'desc',
+                'images',
+                'status',
+                'buyingFormat',
+                'freeShipping',
+                'guarantee',
+                'isStore',
+                'features',
+                'currency',
+                'price',
+                'qty',
+                'manufactureDate',
+                'categoryId',
+                'thumbnail'
+
+            ]
+
+        }
+        const publication = await Publication.findByPk(id, options)
+        const sponsored = await Publication.findAll({
+            ...options,
+            where: {
+                categoryId: publication.categoryId
+            },
+            order: [['sponsorOrder', 'asc']]
+
+        })
+        const sellerItems = await Publication.findAll({
+            ...options,
+            where: {
+                userId: publication.userId,
+                id: { [Op.ne]: publication.id }
+            },
+            order: [['sponsorOrder', 'asc']]
+        })
+
+
         if (publication.length > 0) {
+
             publicationViewing.create({
                 publicationId: id,
                 userId,
                 ipAddress: req.info.remoteAddress
             }).catch(e => { })
+
         }
         return {
             message: "OK",
             success: true,
-            data: publication
+            data: {
+                sponsored,
+                publication,
+                sellerItems
+            }
+
         }
     } catch (error) {
         return {
@@ -207,9 +268,6 @@ const deleteAll = async (req, h) => {
 const Search = async (req, h) => {
 
     try {
-        if (!Object.keys(req.query).length) {
-            throw new Error('no search fond')
-        }
         const {
             cate,
             price,
@@ -222,10 +280,11 @@ const Search = async (req, h) => {
             sort,
             cond,
             counter,
+            year,
             ...filters
         } = req.query
 
-        const limit = 48
+        const limit = 96
         const offset = 0 + (parseInt(pg || 1) - 1) * parseInt(limit);
         let sortItem = []
 
@@ -246,10 +305,19 @@ const Search = async (req, h) => {
 
         const p1 = parseFloat(String(price).split("|")[0])
         const p2 = parseFloat(String(price).split("|")[1])
+
+        const y1 = parseFloat(String(year).split("|")[0])
+        const y2 = parseFloat(String(year).split("|")[1])
+
         const attributes = [
-            "id", "title", "price", "currency", "thumbnail", "categoryId",
-            "freeShipping", "guarantee", "isStore", "conditionId"
+            "id", "title", "currency", "thumbnail", "categoryId",
+            "freeShipping", "guarantee", "isStore", "conditionId","price"
         ]
+        attributes.push(Sequelize.literal(`
+          case when "conditionId" = 1 then 'Nuevo'
+          when "conditionId" = 2 then 'Usado'
+          else 'Para partes' end condition
+        `))
         sch && attributes.push(
             [
                 Sequelize.literal(
@@ -276,8 +344,9 @@ const Search = async (req, h) => {
         }
 
         let where = {
-            ...(cate ? { categoryId: cate.split(",") } : {}),
+            ...(cate ? { categoryId: cate.split(" ").map(e => parseInt(e)) } : {}),
             ...(price ? { price: { [Op.between]: [p1, p2 === Infinity ? Number.MAX_SAFE_INTEGER : p2] } } : {}),
+            ...(year ? { manufactureDate: { [Op.between]: [y1, y2 === Infinity ? Number.MAX_SAFE_INTEGER : y2] } } : {}),
             ...(loca ? { locationId: parseInt(loca) } : {}),
             ...(free ? { freeShipping: Boolean(parseInt(free)) } : {}),
             ...(guarantee ? { guarantee: { [Op.gt]: 0 } } : {}),
@@ -327,9 +396,6 @@ const Search = async (req, h) => {
                 where,
                 order: [['sponsorOrder', 'asc'], ...sortItem],
                 offset: offset,
-                logging(q) {
-                    console.log(q)
-                }
             }
         ));
         if (counter === undefined) {
@@ -344,22 +410,23 @@ const Search = async (req, h) => {
 
 
         const { condition, show: showOnly, cnt: itemsCount } = counter === undefined ? data[1][0][0] : {}
-        const location = counter === undefined ? data[2][0] : null
+        const locations = counter === undefined ? orderBy(data[2][0], ['cnt'], ['desc']) : null
         const features = counter === undefined ? data[3][0].map(e => e.features) : []
-        const rankCategory = counter === undefined ? orderBy(data[4][0], [['cnt', 'desc']]) : null
+        const rankCategory = counter === undefined ? orderBy(data[4][0], ['cnt'], ['desc']) : null
 
 
 
         return {
             success: true,
             items,
+            currentPage: parseInt(pg || 1),
 
             ...(counter === undefined ?
                 {
                     features,
                     condition,
                     showOnly,
-                    location,
+                    locations,
                     itemsCount,
                     rankCategory,
                     pageCount: Math.ceil(itemsCount / limit)

@@ -10,5 +10,4 @@ module.exports=[
     require('./category'),
     require('./initialize'),
     require('./filter'),
-   
 ]

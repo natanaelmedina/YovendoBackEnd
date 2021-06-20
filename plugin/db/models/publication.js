@@ -132,7 +132,7 @@ const Publication = sequelize.define("publication", {
         defaultValue: "DOP"
     },
     price: {
-        type: DataTypes.DECIMAL(20,2),
+        type: DataTypes.DECIMAL(20, 2),
         allowNull: false
     },
     qty: {
@@ -144,6 +144,21 @@ const Publication = sequelize.define("publication", {
         type: DataTypes.INTEGER,
         allowNull: true
     },
+    brandId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    modelId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    manufactureDate: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        min: 1900,
+        max: () => new Date().getFullYear()
+    },
+
     endDate: {
         type: DataTypes.DATEONLY,
         defaultValue: () => moment().add(30, 'days')
@@ -153,19 +168,19 @@ const Publication = sequelize.define("publication", {
 }, {
     indexes: [
 
-        {
-            fields: ['features'],
-            using: 'gin',
-            operator: 'jsonb_path_ops'
-        },
-        {
-            fields: ['categoryId', 'conditionId', 'price', 'isStore', 'guarantee', 'freeShipping', 'locationId', 'status', 'buyingFormat'],
-            using: 'btree',
-        },
-        {
-            unique: true,
-            fields: ['userId', 'title', 'price']
-        }
+        // {
+        //     fields: ['features'],
+        //     using: 'gin',
+        //     operator: 'jsonb_path_ops'
+        // },
+        // {
+        //     fields: ['categoryId', 'conditionId', 'price', 'isStore', 'guarantee', 'freeShipping', 'locationId', 'status', 'buyingFormat'],
+        //     using: 'btree',
+        // },
+        // {
+        //     unique: true,
+        //     fields: ['userId', 'title', 'price']
+        // }
     ],
     sequelize,
     freezeTableName: true,
@@ -184,6 +199,7 @@ const Publication = sequelize.define("publication", {
             Publication.belongsTo(models.Condition, { foreignKey: "conditionId" })
             Publication.belongsTo(models.Location, { foreignKey: "locationId" })
             Publication.belongsTo(models.Category, { foreignKey: "categoryId" })
+            Publication.belongsTo(models.User, { foreignKey: "userId" })
             // opts.force await Publication.bulkCreate(new Array(4000).fill(dummyData[index % 2]), { returning: false })
 
         }

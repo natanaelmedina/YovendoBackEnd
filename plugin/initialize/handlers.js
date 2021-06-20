@@ -1,4 +1,4 @@
-const { Category, Filter } = require('../db/models')
+const { Category, Filter, Location } = require('../db/models')
 const path = require('path')
 const fs = require('fs')
 
@@ -8,13 +8,15 @@ const Initialize = async (req, h) => {
             hierarchy: true,
 
         })
+        const locations = await Location.findAll({ attributes: ['id', 'name'] })
         const slides = fs.readdirSync(path.join(__dirname, '../../public/homeSlides')).map(e => ("public/homeSlides/" + e))
         return {
             message: "OK",
             success: true,
             data: {
                 category,
-                slides
+                slides,
+                locations
             }
         }
 

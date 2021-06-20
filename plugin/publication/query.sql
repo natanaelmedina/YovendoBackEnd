@@ -42,11 +42,13 @@ FROM (
 		 b.value::jsonb->>'value' as value,
 	     count(b.value::jsonb->>'value') qty,
 	     max(b.value::jsonb->>'filtrable') filterable
+	    -- c."filterType"
 		from publication 
 	    INNER join jsonb_each_text(publication."features") b ON true and publication."features" is not null
+	   -- INNER JOIN "features" c on c.code=b.key and c."filterable" = true
         --{where}
 		group by b.key,b.value,b.value::jsonb->>'value'
-	    having b.key is not null and b.value is not null and b.value::jsonb->>'filtrable'='true'
+	    having b.key is not null and b.value is not null
  ) as features
 GROUP BY key
 ORDER BY key

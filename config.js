@@ -32,7 +32,7 @@ module.exports = {
                     hsts: true
                 },
                 files: {
-                    relativeTo: path.join(__dirname, '../FrontEnd/v1/build')
+                    relativeTo: path.join(__dirname, '../web/build')
                 }
 
             }

@@ -6,7 +6,7 @@ process.stdout.write(
     String.fromCharCode(27) +
     "]0; YoVendo Api v1" +
     String.fromCharCode(7)
-  );
+);
 process.env.smsToken = 'bb3d95d58e0430294cd6f8ca6aaddd49'
 process.env.JWT = 'yovendoRd2020'
 process.env.apiVersion = process.env.apiVersion || "0.0.3"
@@ -66,10 +66,10 @@ const init = async () => {
         {
             method: 'GET',
             path: '/public/{path*}',
-            options:{
-                cache:{
-                   expiresIn: Number.MAX_SAFE_INTEGER, // milliseconds 
-               },
+            options: {
+                cache: {
+                    expiresIn: Number.MAX_SAFE_INTEGER, // milliseconds 
+                },
             },
             handler: {
                 directory: {
@@ -78,6 +78,16 @@ const init = async () => {
                     index: false
                 }
             }
+        },
+        {
+            method: 'GET',
+            path: '/cache',
+            handler: (r,h) =>{
+                const response = h.response([]);
+                response.type('application/json');
+                response.code(200)
+                return response;
+            } 
         },
         {
             method: 'GET',

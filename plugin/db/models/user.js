@@ -11,7 +11,7 @@ const user = [
     }
 ]
 
-const User = sequelize.define("user",{
+const User = sequelize.define("user", {
     id: {
         type: DataTypes.INTEGER,
         autoIncrementIdentity: true,
@@ -32,7 +32,7 @@ const User = sequelize.define("user",{
         allowNull: false,
         unique: true
     },
-    userType: {
+    userTypeId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 1
@@ -81,11 +81,13 @@ const User = sequelize.define("user",{
     }
 
 }, {
-    freezeTableName:true,
-    modelName: 'user' ,
-    hooks:{
+    freezeTableName: true,
+    modelName: 'user',
+    hooks: {
         async afterSync(opts) {
+            const models = require('.')
             opts.force && await User.bulkCreate(user)
+            User.belongsTo(models.UserType, { foreignKey: "userTypeId" })
         }
     }
 });
