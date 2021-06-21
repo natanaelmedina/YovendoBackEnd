@@ -81,13 +81,13 @@ const init = async () => {
         },
         {
             method: 'GET',
-            path: '/cache',
-            handler: (r,h) =>{
+            path: '/cache/{key}',
+            handler: (r, h) => {
                 const response = h.response([]);
                 response.type('application/json');
                 response.code(200)
                 return response;
-            } 
+            }
         },
         {
             method: 'GET',

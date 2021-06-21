@@ -19,7 +19,7 @@ const Condition = sequelize.define("condition", {
     },
 
 }, {
-    freezeTableName:true,
+    freezeTableName: true,
     sequelize,
     modelName: 'condition',
     hooks: {

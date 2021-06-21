@@ -88,6 +88,7 @@ const User = sequelize.define("user", {
             const models = require('.')
             opts.force && await User.bulkCreate(user)
             User.belongsTo(models.UserType, { foreignKey: "userTypeId" })
+            User.hasOne(models.Store, { foreignKey: "userId" })
         }
     }
 });

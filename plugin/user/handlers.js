@@ -1,4 +1,4 @@
-const { User, Tienda } = require('../db/models')
+const { User, Store } = require('../db/models')
 const save = require('save-file')
 const path = require('path')
 const { server, twilio } = require('../../config')
@@ -200,7 +200,7 @@ const login = async (req, h) => {
         const user = await User.findOne({
             where: { email },
             include: [{
-                model: Tienda
+                model: Store
             }]
         })
 
@@ -325,28 +325,28 @@ const createUserExternal = async (req, h) => {
         })
 
         new Promise(async e => {
-          try {
-            if (profileImage && user[1]) {
-                const { data } = await axios.get(profileImage, {
-                    responseType: "arraybuffer",
-                    headers: {
-                        accept: "accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-                        "cache-control": "no-cache",
-                        "sec-fetch-dest": "image",
-                        "sec-fetch-mode": " no-cors",
-                        "sec-fetch-site": "same-site"
-                    }
-                })
-                const type = await fileType.fromBuffer(data) || { ext: "jpj" }
-                const fileName = "profile." + type.ext
-                const fullDir = path.join(__dirname, `../../public/users/${user[0].id}/`, fileName)
-                await save(fullDir, data)
-                const url = `public/users/${user[0].id}/${fileName}`
-                await User.update({ profileImage: url }, { where: { id: user[0].id } })
+            try {
+                if (profileImage && user[1]) {
+                    const { data } = await axios.get(profileImage, {
+                        responseType: "arraybuffer",
+                        headers: {
+                            accept: "accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+                            "cache-control": "no-cache",
+                            "sec-fetch-dest": "image",
+                            "sec-fetch-mode": " no-cors",
+                            "sec-fetch-site": "same-site"
+                        }
+                    })
+                    const type = await fileType.fromBuffer(data) || { ext: "jpj" }
+                    const fileName = "profile." + type.ext
+                    const fullDir = path.join(__dirname, `../../public/users/${user[0].id}/`, fileName)
+                    await save(fullDir, data)
+                    const url = `public/users/${user[0].id}/${fileName}`
+                    await User.update({ profileImage: url }, { where: { id: user[0].id } })
+                }
+            } catch (error) {
+                console.log(error)
             }
-          } catch (error) {
-             console.log(error) 
-          }
         })
 
         return {
